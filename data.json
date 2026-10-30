@@ -225,7 +225,7 @@
     45,
     47
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Fábio",
@@ -257,7 +257,7 @@
     32,
     48
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Gena",
@@ -710,7 +710,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793376864688,
+ "atualizado": 1793377409123,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
