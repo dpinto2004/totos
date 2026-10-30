@@ -1,0 +1,51 @@
+name: Verificar sorteio Euromilhões
+
+on:
+  schedule:
+    # Horas em UTC. Terças e sextas à noite, e manhã seguinte (cobre hora de verão e de inverno)
+    - cron: "*/15 19-23 * * 2,5"
+    - cron: "0 0-12/2 * * 3,6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: sorteio
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ler chave na Santa Casa
+        run: node scripts/verificar-sorteio.mjs
+
+      - name: Guardar se houver sorteio novo
+        id: guardar
+        run: |
+          if git diff --quiet data.json; then
+            echo "novo=nao" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "Novo sorteio do Euromilhões"
+          git pull --rebase
+          git push
+          echo "novo=sim" >> "$GITHUB_OUTPUT"
+
+      - name: Atualizar o site
+        if: steps.guardar.outputs.novo == 'sim'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
