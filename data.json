@@ -710,7 +710,14 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793375142982,
- "cofre": null,
- "config": null
+ "atualizado": 1793376864688,
+ "cofre": {
+  "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
+  "iv": "sPLznsT2zbNq+TK+",
+  "ct": "i3GTdsXITT6zJKseKEu9Ve4goV0HRZe9vaoSV3InZEu9/fYgRgLGUmY5k5+wki2biMXvso+9onfbmcVCzycj7lOUR4xSNEeNlRhOKn38rXKvsFs8ohkA1sAtTOru+YAW64O2o5R3l4/xQedimQ=="
+ },
+ "config": {
+  "repo": "dpinto2004/totos",
+  "ramo": "main"
+ }
 }
