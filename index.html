@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Totos Euromilhões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fundo:#E9EDF1;
+  --papel:#FFFFFF;
+  --tinta:#18212C;
+  --suave:#5B6775;
+  --linha:#CDD5DE;
+  --azul:#2F55D4;
+  --azul-txt:#FFFFFF;
+  --verde:#13A046;
+  --verde-claro:#7BE39E;
+  --alerta:#B4410E;
+  --cabeca:#D9DFE6;
+  --cond:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --corpo:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fundo:#10161D;--papel:#19222C;--tinta:#E8EDF2;--suave:#97A3B0;--linha:#2C3845;
+    --azul:#4C70F0;--verde:#22C55E;--verde-claro:#0F5B2C;--alerta:#F08A4B;--cabeca:#222D39;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --fundo:#10161D;--papel:#19222C;--tinta:#E8EDF2;--suave:#97A3B0;--linha:#2C3845;
+  --azul:#4C70F0;--verde:#22C55E;--verde-claro:#0F5B2C;--alerta:#F08A4B;--cabeca:#222D39;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--corpo);font-size:16px;line-height:1.45}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 16px 60px}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+/* Topo */
+.topo{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:18px;border-bottom:2px solid var(--tinta)}
+.titulo h1{font-family:var(--cond);font-weight:800;font-size:clamp(2.2rem,5vw,3.4rem);line-height:.9;margin:0;letter-spacing:-.01em}
+.titulo p{margin:6px 0 0;color:var(--suave)}
+.acoes{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--tinta);background:transparent;padding:8px 14px;border-radius:6px;font-weight:600}
+.btn:hover{background:var(--tinta);color:var(--fundo)}
+.btn.cheio{background:var(--tinta);color:var(--fundo)}
+.btn.perigo{border-color:var(--alerta);color:var(--alerta)}
+.btn.perigo:hover{background:var(--alerta);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* Chave */
+.chave{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:22px 0;border-bottom:1px solid var(--linha)}
+.chave .rotulo{color:var(--suave);font-size:.95rem}
+.bolas{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;align-items:center}
+.bola{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-family:var(--cond);font-weight:800;font-size:1.9rem;background:var(--azul);color:var(--azul-txt)}
+.mais{font-family:var(--cond);font-size:1.6rem;color:var(--suave);padding:0 2px}
+.estado{font-size:.9rem;color:var(--suave);margin-top:10px;min-height:1.3em}
+.numeros-ronda{display:flex;gap:28px;text-align:right}
+.numeros-ronda div b{display:block;font-family:var(--cond);font-weight:800;font-size:2.4rem;line-height:1}
+.numeros-ronda div span{color:var(--suave);font-size:.9rem}
+
+/* Vencedor */
+.faixa-vencedor{display:none;margin:18px 0 0;padding:16px 20px;border-radius:8px;background:var(--verde);color:#fff;font-family:var(--cond);font-weight:700;font-size:1.6rem;animation:piscar 1.1s linear infinite}
+.faixa-vencedor.on{display:block}
+
+/* Ranking */
+.perto{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;color:var(--suave);font-size:.95rem;border-bottom:1px solid var(--linha)}
+.perto b{color:var(--tinta)}
+
+/* Barra ferramentas */
+.barra{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 12px}
+.barra h2{font-family:var(--cond);font-size:1.6rem;margin:0;font-weight:700}
+.seg{display:inline-flex;border:1.5px solid var(--linha);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--tinta);color:var(--fundo)}
+
+/* Grelha jogadores */
+.grelha{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.jog{background:var(--papel);border:1.5px solid var(--linha);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.jog .cab{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--cabeca)}
+.jog .nome{flex:1;min-width:0;font-family:var(--cond);font-weight:700;font-size:1.12rem;line-height:1.1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.jog .conta{flex:none;min-width:2.1em;height:2.1em;border-radius:50%;display:grid;place-items:center;font-family:var(--cond);font-weight:800;font-size:1.15rem;background:var(--tinta);color:var(--fundo)}
+.jog .nums{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px}
+.jog .n{font-family:var(--cond);font-weight:700;font-size:1.15rem;text-align:center;padding:5px 0;border-radius:5px;background:var(--fundo)}
+.jog .n.hit{background:var(--azul);color:var(--azul-txt)}
+.jog .rodape{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 6px;padding:0 8px 8px}
+.pill{font-family:var(--cond);font-weight:700;font-size:.92rem;padding:4px 10px;border-radius:999px;border:1.5px solid currentColor;background:transparent;line-height:1.2;white-space:nowrap}
+.pill.sim{color:var(--verde)}
+.pill.nao{color:var(--alerta)}
+button.pill{cursor:pointer;min-height:34px}
+button.pill:hover{background:var(--fundo)}
+.jog .falta{font-size:.82rem;color:var(--suave)}
+.jog.ganhou{border-color:var(--verde)}
+.jog.ganhou .cab,.jog.ganhou .n{animation:piscar 1.1s linear infinite}
+.jog.ganhou .conta{background:#fff;color:var(--verde)}
+@keyframes piscar{0%,49%{background:var(--verde);color:#fff}50%,100%{background:var(--verde-claro);color:#0B2E17}}
+
+/* Modo gestão no cartão */
+.jog input.ed{width:100%;min-width:0;border:1.5px solid var(--linha);border-radius:5px;background:var(--fundo);text-align:center;font-family:var(--cond);font-weight:700;font-size:16px;padding:5px 0}
+.jog input.ed.hit{background:var(--azul);color:var(--azul-txt);border-color:var(--azul)}
+.jog input.nome-ed{flex:1;text-align:left;padding:5px 7px;background:var(--papel)}
+.jog input.ed.erro{background:#F9D6C7;color:#7A1F00;border-color:var(--alerta)}
+.jog .del{border:0;background:transparent;color:var(--alerta);font-weight:700;font-size:1.1rem;padding:4px 6px;min-height:34px}
+.jog.novo{display:grid;place-items:center;min-height:150px;border-style:dashed}
+.jog.novo button{border:0;background:transparent;font-family:var(--cond);font-weight:700;font-size:1.2rem;padding:20px;width:100%;height:100%}
+.jog .aviso{font-size:.8rem;color:var(--alerta);padding:0 10px 6px}
+
+/* Sorteios */
+.sorteios{display:flex;gap:0;overflow-x:auto;border-top:1.5px solid var(--tinta);border-left:1.5px solid var(--tinta);background:var(--papel)}
+.sort{flex:0 0 78px;border-right:1.5px solid var(--tinta);border-bottom:1.5px solid var(--tinta)}
+.sort .d{background:var(--cabeca);font-family:var(--cond);font-weight:700;text-align:center;padding:5px 0;border-bottom:1px solid var(--linha)}
+.sort li{font-family:var(--cond);font-weight:700;font-size:1.15rem;text-align:center;border-bottom:1px solid var(--linha);list-style:none}
+.sort ol{margin:0;padding:0}
+.sort .f{font-size:.72rem;color:var(--suave);text-align:center;padding:3px 0}
+.sort .x{display:block;width:100%;border:0;background:transparent;color:var(--alerta);font-weight:700;padding:3px 0}
+.vazio{padding:18px;color:var(--suave)}
+
+/* Painel gestão */
+.painel{display:none;margin-top:28px;border:1.5px solid var(--tinta);border-radius:8px;background:var(--papel);padding:18px}
+.painel.on{display:block}
+.painel h3{font-family:var(--cond);font-size:1.35rem;margin:0 0 10px}
+.painel section+section{margin-top:22px;padding-top:18px;border-top:1px solid var(--linha)}
+.linha-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.linha-form input{border:1.5px solid var(--linha);background:var(--fundo);border-radius:6px;padding:7px 8px}
+.linha-form input.n{width:58px;text-align:center}
+.linha-form input{font-size:16px}
+.linha-form input.erro{background:#F9D6C7;color:#7A1F00;border-color:var(--alerta)}
+.nota{font-size:.88rem;color:var(--suave);margin:8px 0 0;max-width:70ch}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(10,15,20,.55);display:none;place-items:center;z-index:50;padding:16px}
+.modal.on{display:grid}
+.caixa{background:var(--papel);border-radius:10px;padding:22px;width:min(380px,100%)}
+.caixa h3{font-family:var(--cond);font-size:1.5rem;margin:0 0 12px}
+.caixa input{width:100%;border:1.5px solid var(--linha);background:var(--fundo);border-radius:6px;padding:10px;margin-bottom:10px}
+.caixa .erro{color:var(--alerta);font-size:.9rem;min-height:1.2em;margin-bottom:8px}
+.caixa .acoes{justify-content:flex-end}
+
+.barra-pub{position:fixed;left:0;right:0;bottom:0;z-index:55;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--tinta);color:var(--fundo);box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+.barra-pub.on{display:flex}
+.barra-pub #pubTxt{font-weight:600}
+.barra-pub .pub-acoes{display:flex;gap:8px}
+.barra-pub .btn{border-color:var(--fundo);color:var(--fundo);min-height:44px}
+.barra-pub .btn.cheio{background:var(--verde);border-color:var(--verde);color:#fff}
+.barra-pub .btn:disabled{opacity:.6}
+body.pendente .wrap{padding-bottom:120px}
+body.pendente .toast{bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.x-aviso{margin:14px 0 0;padding:12px 14px;border-radius:8px;border:1.5px solid var(--alerta);color:var(--tinta);background:var(--papel);font-size:.95rem;line-height:1.4}
+.x-aviso a{color:var(--azul);font-weight:600}
+@media print{.x-aviso{display:none!important}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:var(--fundo);padding:10px 16px;border-radius:6px;font-size:.95rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90vw}
+.toast.on{opacity:1}
+
+.historico{margin-top:10px;font-size:.92rem;color:var(--suave)}
+.historico li{margin:2px 0}
+
+@media (max-width:640px){
+  .chave{grid-template-columns:1fr}
+  .numeros-ronda{text-align:left}
+  .bolas{gap:6px}
+  .bola{width:42px;height:42px;font-size:1.4rem}
+  .mais{font-size:1.2rem}
+  .grelha{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .wrap{padding:14px 10px 50px}
+  .topo .acoes{width:100%}
+  .topo .acoes .btn{flex:1 1 40%;min-height:44px;justify-content:center}
+  .numeros-ronda{gap:20px}
+  .numeros-ronda div b{font-size:1.9rem}
+}
+.btn.icone{display:inline-flex;align-items:center;gap:7px}
+.btn.icone svg{width:20px;height:20px;flex:none}
+@page{size:A3 landscape;margin:8mm}
+@media print{
+  :root,:root:not([data-theme="light"]){
+    --fundo:#F1F3F5;--papel:#fff;--tinta:#111;--suave:#555;--linha:#C9CFD6;--azul:#2F55D4;--verde:#13A046;--alerta:#B4410E;--cabeca:#DDE2E8;
+    color-scheme:light;padding:0;
+  }
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important}
+  body{background:#fff;font-size:11pt}
+  .wrap{max-width:none;padding:0}
+  .acoes,.barra .seg,.painel,.estado,.toast,.modal,.jog.novo,.barra-pub{display:none!important}
+  .topo{padding-bottom:6px}
+  .titulo h1{font-size:26pt}
+  .chave{padding:8px 0;grid-template-columns:1fr auto}
+  .bola{width:40px;height:40px;font-size:18pt}
+  .numeros-ronda{text-align:right}
+  .numeros-ronda div b{font-size:20pt}
+  .perto{padding:6px 0;font-size:9.5pt}
+  .faixa-vencedor{margin-top:8px;padding:8px 14px;font-size:16pt;background:var(--verde)!important;color:#fff!important}
+  .barra{margin:10px 0 6px}
+  .barra h2{font-size:14pt}
+  .grelha{grid-template-columns:repeat(11,1fr)!important;gap:5px}
+  .jog{break-inside:avoid;border-radius:5px}
+  .jog .cab{padding:4px 6px}
+  .jog .nome{font-size:10.5pt}
+  .jog .conta{font-size:10pt;min-width:1.9em;height:1.9em}
+  .jog .nums{gap:2px;padding:4px}
+  .jog .n{font-size:10.5pt;padding:2px 0;border-radius:3px}
+  .jog .rodape{padding:0 5px 4px}
+  .pill{font-size:8.5pt;padding:1px 7px}
+  .jog .falta{font-size:8pt}
+  .jog.ganhou .cab,.jog.ganhou .n{background:var(--verde)!important;color:#fff!important}
+  .sorteios{flex-wrap:wrap;overflow:visible;gap:6px;border:0;background:transparent}
+  .sort{flex:0 0 auto;display:flex;align-items:stretch;border:1.5px solid var(--tinta);border-radius:4px;overflow:hidden;break-inside:avoid;background:#fff}
+  .sort .d{padding:2px 6px;border:0;border-right:1px solid var(--linha);display:flex;align-items:center;font-size:10pt}
+  .sort ol{display:flex}
+  .sort li{width:26px;font-size:10.5pt;border:0;border-right:1px solid var(--linha);padding:2px 0}
+  .sort li:last-child{border-right:0}
+  .sort .f,.sort .x{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <div class="titulo">
+      <h1 id="tRonda">Totos Euromilhões</h1>
+      <p id="tSub"></p>
+    </div>
+    <div class="acoes">
+      <button class="btn icone" id="bImprimir" title="Imprimir tudo em A3 horizontal" aria-label="Imprimir em A3 horizontal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/><circle cx="17.5" cy="12" r=".6" fill="currentColor"/></svg><span>A3</span></button>
+      <a class="btn" id="bOficial" href="https://www.jogossantacasa.pt/web/SCCartazResult/euroMilhoes" target="_blank" rel="noopener">Resultados oficiais</a>
+      <button class="btn" id="bVerificar" hidden>Verificar sorteio</button>
+      <button class="btn cheio" id="bGerir">Gerir</button>
+    </div>
+  </header>
+
+  
+  <div class="faixa-vencedor" id="faixa"></div>
+
+  <section class="chave">
+    <div>
+      <div class="rotulo" id="cRotulo">Último sorteio</div>
+      <div class="bolas" id="cBolas"></div>
+      <div class="estado" id="estado" aria-live="polite"></div>
+    </div>
+    <div class="numeros-ronda" id="resumo"></div>
+  </section>
+
+  <div class="perto" id="perto"></div>
+
+  <div class="barra">
+    <h2>Jogadores</h2>
+    <div class="seg" role="group" aria-label="Ordenar jogadores">
+      <button id="oOrig" aria-pressed="true">Alfabética</button>
+      <button id="oAcertos" aria-pressed="false">Mais acertos</button>
+    </div>
+  </div>
+  <div class="grelha" id="grelha"></div>
+
+  <div class="barra"><h2>Sorteios desta ronda</h2></div>
+  <div class="sorteios" id="sorteios"></div>
+
+  <div class="painel" id="painel">
+    <section id="secJogador">
+      <h3>Acrescentar jogador</h3>
+      <div class="linha-form">
+        <input id="jNome" placeholder="Nome" aria-label="Nome do novo jogador" style="min-width:180px">
+        <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="jPago"> Pago</label>
+      </div>
+      <div class="linha-form" style="margin-top:8px">
+          <input class="n jn" inputmode="numeric" aria-label="Número 1">
+          <input class="n jn" inputmode="numeric" aria-label="Número 2">
+          <input class="n jn" inputmode="numeric" aria-label="Número 3">
+          <input class="n jn" inputmode="numeric" aria-label="Número 4">
+          <input class="n jn" inputmode="numeric" aria-label="Número 5">
+          <input class="n jn" inputmode="numeric" aria-label="Número 6">
+          <input class="n jn" inputmode="numeric" aria-label="Número 7">
+          <input class="n jn" inputmode="numeric" aria-label="Número 8">
+          <input class="n jn" inputmode="numeric" aria-label="Número 9">
+          <input class="n jn" inputmode="numeric" aria-label="Número 10">
+      </div>
+      <div class="linha-form" style="margin-top:10px">
+        <button class="btn cheio" id="bAddJogador">Acrescentar jogador</button>
+        <span class="nota" id="jErro" style="margin:0;color:var(--alerta)"></span>
+      </div>
+      <p class="nota">10 números diferentes, de 1 a 50. Pode deixar números em branco e completar depois no cartão.</p>
+    </section>
+    <section>
+      <h3>Eliminar jogador</h3>
+      <div class="linha-form">
+        <select id="eJogador" aria-label="Jogador a eliminar" style="border:1.5px solid var(--linha);background:var(--fundo);border-radius:6px;padding:8px;min-width:200px;font:inherit;color:inherit"></select>
+        <button class="btn perigo" id="bDelJogador">Eliminar jogador</button>
+      </div>
+      <p class="nota">Também pode eliminar no ✕ de cada cartão.</p>
+    </section>
+    <section>
+      <h3>Inserir chave à mão</h3>
+      <div class="linha-form" id="fSorteio">
+        <input type="date" id="sData" aria-label="Data do sorteio">
+        <input class="n" inputmode="numeric" aria-label="Número 1">
+        <input class="n" inputmode="numeric" aria-label="Número 2">
+        <input class="n" inputmode="numeric" aria-label="Número 3">
+        <input class="n" inputmode="numeric" aria-label="Número 4">
+        <input class="n" inputmode="numeric" aria-label="Número 5">
+        <button class="btn cheio" id="bAddSorteio">Adicionar sorteio</button>
+      </div>
+      <p class="nota">Os sorteios entram sozinhos às terças e sextas à noite (GitHub Actions). Use isto se faltar algum. Só contam os 5 números.</p>
+    </section>
+    <section>
+      <h3>Ronda</h3>
+      <div class="linha-form">
+        <label>Início da nova ronda <input type="date" id="nInicio"></label>
+        <button class="btn" id="bNovaRonda">Fechar ronda e começar nova</button>
+      </div>
+      <p class="nota">Mantém jogadores e números. Limpa os sorteios e marca todos como não pagos.</p>
+      <ul class="historico" id="historico"></ul>
+    </section>
+    <section>
+      <h3>Guardar</h3>
+      <p class="nota" style="margin-top:0">As alterações só ficam visíveis para todos depois de carregar em <b>Guardar para todos</b>, na barra em baixo. Quem tiver a página aberta vê as alterações em cerca de 1 minuto.</p>
+    </section>
+    <section>
+      <h3>Palavra-passe</h3>
+      <div class="linha-form">
+        <input type="password" id="pNova" placeholder="Nova palavra-passe" autocomplete="new-password">
+        <button class="btn" id="bPass">Alterar palavra-passe</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="mConfig" role="dialog" aria-modal="true" aria-labelledby="cTit">
+  <div class="caixa" style="width:min(460px,100%)">
+    <h3 id="cTit">Configurar a gestão</h3>
+    <p class="nota" style="margin:0 0 12px">Só é preciso fazer isto uma vez. O token fica guardado cifrado com a palavra-passe que escolher.</p>
+    <input id="cRepo" placeholder="utilizador/repositório" aria-label="Repositório" autocomplete="off">
+    <input id="cRamo" placeholder="main" aria-label="Ramo" value="main" autocomplete="off">
+    <input id="cToken" type="password" placeholder="Token do GitHub (github_pat_…)" aria-label="Token" autocomplete="off">
+    <input id="cP1" type="password" placeholder="Nova palavra-passe da gestão" autocomplete="new-password">
+    <input id="cP2" type="password" placeholder="Repetir palavra-passe" autocomplete="new-password">
+    <div class="erro" id="cErro"></div>
+    <div class="acoes">
+      <button class="btn" id="cCancelar">Cancelar</button>
+      <button class="btn cheio" id="cGuardar">Configurar</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="mLogin" role="dialog" aria-modal="true" aria-labelledby="mTit">
+  <div class="caixa">
+    <h3 id="mTit">Entrar na gestão</h3>
+    <input type="password" id="mPass" placeholder="Palavra-passe" autocomplete="current-password">
+    <div class="erro" id="mErro"></div>
+    <div class="acoes">
+      <button class="btn" id="mCancelar">Cancelar</button>
+      <button class="btn cheio" id="mEntrar">Entrar</button>
+    </div>
+  </div>
+</div>
+<div class="barra-pub" id="barraPub" role="region" aria-label="Alterações por publicar">
+  <span id="pubTxt"></span>
+  <div class="pub-acoes">
+    <button class="btn" id="bDescartar">Descartar</button>
+    <button class="btn cheio" id="bPublicar">Guardar para todos</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- GitHub + cifra ---------- */
+const API = "https://api.github.com";
+let TOKEN = "", PASS = "";
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const b64utf8 = s => { const b=enc.encode(s); let t=""; for(let i=0;i<b.length;i+=8192) t+=String.fromCharCode(...b.subarray(i,i+8192)); return btoa(t); };
+async function derivar(pass, salt){
+  const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:310000, hash:"SHA-256"}, base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
+}
+async function cifrar(texto, pass){
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({name:"AES-GCM", iv}, await derivar(pass, salt), enc.encode(texto));
+  return {salt:b64(salt), iv:b64(iv), ct:b64(ct)};
+}
+async function decifrar(c, pass){
+  try{
+    const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:unb64(c.iv)}, await derivar(pass, unb64(c.salt)), unb64(c.ct));
+    return dec.decode(pt);
+  }catch(e){ return null; }
+}
+function repoDetetado(){
+  const h = location.hostname, seg = location.pathname.split("/").filter(Boolean)[0];
+  if(h.endsWith(".github.io")) return h.split(".")[0] + "/" + (seg && !seg.includes(".") ? seg : h);
+  return "";
+}
+async function gh(path, opts={}){
+  const r = await fetch(API + path, {...opts, cache:"no-store", headers:{
+    "Authorization":"Bearer " + TOKEN, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28", ...(opts.headers||{}) }});
+  if(!r.ok){ const e = new Error("GitHub respondeu " + r.status); e.status = r.status; throw e; }
+  return r.status === 204 ? null : r.json();
+}
+async function lerRepo(cfg){
+  const c = cfg || S.config;
+  const j = await gh(`/repos/${c.repo}/contents/data.json?ref=${encodeURIComponent(c.ramo)}`);
+  const bytes = unb64(j.content.replace(/\n/g,""));
+  return {dados: JSON.parse(dec.decode(bytes)), sha: j.sha};
+}
+async function escreverRepo(d, sha, msg, cfg){
+  const c = cfg || S.config;
+  return gh(`/repos/${c.repo}/contents/data.json`, {method:"PUT", body: JSON.stringify({
+    message: msg, content: b64utf8(JSON.stringify(d, null, 1) + "\n"), sha, branch: c.ramo })});
+}
+const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+/* ---------- Estado ---------- */
+let S = null, pendentes = 0, base = null;
+let admin = false, ordem = "orig";
+
+function guardar(){
+  pendentes++;
+  atualizarBarra();
+}
+function atualizarBarra(){
+  const on = pendentes>0;
+  $("barraPub").classList.toggle("on",on);
+  document.body.classList.toggle("pendente",on);
+  $("pubTxt").textContent = pendentes===1 ? "1 alteração por guardar" : pendentes+" alterações por guardar";
+}
+
+/* ---------- Utilitários ---------- */
+const $ = id => document.getElementById(id);
+function el(tag, attrs, ...filhos){
+  const n=document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k==="class") n.className=attrs[k];
+    else if(k.startsWith("on")) n.addEventListener(k.slice(2),attrs[k]);
+    else if(attrs[k]!==false && attrs[k]!=null) n.setAttribute(k,attrs[k]===true?"":attrs[k]);
+  }
+  for(const f of filhos){ if(f==null) continue; n.append(f.nodeType?f:String(f)); }
+  return n;
+}
+function dataCurta(iso){ const [a,m,d]=iso.split("-"); return +d+"/"+MESES[+m-1]; }
+function dataLonga(iso){ const [a,m,d]=iso.split("-"); return d+"/"+m+"/"+a; }
+function hojeISO(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+let tToast;
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(tToast); tToast=setTimeout(()=>t.classList.remove("on"),3200); }
+function formatarNome(s){
+  s=String(s).trim().replace(/\s+/g," ");
+  if(!s) return "";
+  return s.toLocaleLowerCase("pt-PT").replace(/(^|[\s.\-])(\p{L})/gu,(m,a,b)=>a+b.toLocaleUpperCase("pt-PT"));
+}
+function numValido(v){ return Number.isInteger(v) && v>=1 && v<=50; }
+function jogadorCompleto(j){ const ns=j.numeros.filter(numValido); return ns.length===10 && new Set(ns).size===10; }
+function sorteiosOrd(){ return S.sorteios.slice().sort((a,b)=>a.data.localeCompare(b.data)); }
+
+/* ---------- Cálculo ---------- */
+function calcular(){
+  const ords = sorteiosOrd();
+  const saidos = new Set();
+  let vencedores = [], dataVitoria = null, idxFim = ords.length;
+  for(let i=0;i<ords.length && !vencedores.length;i++){
+    ords[i].numeros.forEach(n=>saidos.add(n));
+    const v = S.jogadores.filter(j=>jogadorCompleto(j) && j.numeros.every(n=>saidos.has(n)));
+    if(v.length){ vencedores=v; dataVitoria=ords[i].data; idxFim=i+1; }
+  }
+  // Números que contam: só até ao sorteio da vitória
+  const contam = new Set();
+  ords.slice(0,idxFim).forEach(s=>s.numeros.forEach(n=>contam.add(n)));
+  const acertos = new Map();
+  S.jogadores.forEach(j=>acertos.set(j, j.numeros.filter(n=>contam.has(n)).length));
+  return {contam, acertos, vencedores, dataVitoria, ords};
+}
+
+/* ---------- Render ---------- */
+function render(){
+  if(!S) return;
+  const R = calcular();
+  const pagos = S.jogadores.filter(j=>j.pago).length;
+
+  $("tRonda").textContent = S.ronda + ".ª ronda de " + S.ano;
+  $("tSub").textContent = S.jogadores.length + " jogadores. Ganha quem completar primeiro os seus 10 números.";
+  document.title = "Totos Euromilhões, " + S.ronda + ".ª ronda";
+
+  // Faixa vencedor
+  const fx=$("faixa");
+  if(R.vencedores.length){
+    fx.textContent = (R.vencedores.length>1?"Vencedores: ":"Vencedor: ") + R.vencedores.map(j=>j.nome).join(", ") + " (sorteio de " + dataLonga(R.dataVitoria) + ")";
+    fx.classList.add("on");
+  } else fx.classList.remove("on");
+
+  // Último sorteio
+  const ult = R.ords[R.ords.length-1];
+  const cb=$("cBolas"); cb.innerHTML="";
+  if(ult){
+    $("cRotulo").textContent = "Último sorteio, " + dataLonga(ult.data);
+    ult.numeros.forEach(n=>cb.append(el("span",{class:"bola"},n)));
+  } else {
+    $("cRotulo").textContent = "Ainda sem sorteios nesta ronda";
+  }
+
+  // Resumo
+  const rs=$("resumo"); rs.innerHTML="";
+  const maxAc = Math.max(0,...S.jogadores.map(j=>R.acertos.get(j)));
+  [[R.ords.length,"sorteios"],[R.contam.size,"números saídos"],[pagos+"/"+S.jogadores.length,"pagos"]].forEach(([v,l])=>{
+    rs.append(el("div",null,el("b",null,v),el("span",null,l)));
+  });
+
+  // Mais perto
+  const pt=$("perto"); pt.innerHTML="";
+  if(!R.vencedores.length && R.ords.length){
+    const grupos={};
+    S.jogadores.forEach(j=>{const a=R.acertos.get(j); if(a>0)(grupos[a]=grupos[a]||[]).push(j.nome);});
+    const chaves=Object.keys(grupos).map(Number).sort((a,b)=>b-a).slice(0,3);
+    chaves.forEach(a=>{
+      const falta=10-a;
+      pt.append(el("span",null,el("b",null,a+(a===1?" acerto":" acertos")),", faltam "+falta+": "+grupos[a].join(", ")));
+    });
+  }
+  pt.style.display = pt.childNodes.length ? "" : "none";
+
+  renderGrelha(R);
+  renderSorteios(R);
+  if(admin) renderPainel();
+}
+
+function renderGrelha(R){
+  const g=$("grelha"); g.innerHTML="";
+  let lista = S.jogadores.map((j,i)=>({j,i}));
+  lista.sort((a,b)=> (ordem==="acertos" ? R.acertos.get(b.j)-R.acertos.get(a.j) : 0) || a.j.nome.localeCompare(b.j.nome,"pt",{sensitivity:"base"}));
+  const venc = new Set(R.vencedores);
+
+  lista.forEach(({j,i})=>{
+    const ac=R.acertos.get(j);
+    const card = el("div",{class:"jog"+(venc.has(j)?" ganhou":"")});
+    const cab = el("div",{class:"cab"});
+    const nums = el("div",{class:"nums"});
+    const rod = el("div",{class:"rodape"});
+
+    if(!admin){
+      cab.append(el("div",{class:"nome",title:j.nome},j.nome));
+      j.numeros.filter(numValido).slice().sort((a,b)=>a-b).forEach(n=>{
+        const hit=R.contam.has(n);
+        nums.append(el("div",{class:"n"+(hit?" hit":""),"aria-label":n+(hit?", saiu":"")},n));
+      });
+      rod.append(el("span",{class:"pill "+(j.pago?"sim":"nao")}, j.pago?"Pago":"Falta pagar"));
+      rod.append(el("span",{class:"falta"}, venc.has(j)?"Completou!":(jogadorCompleto(j)?"Faltam "+(10-ac):"")));
+    } else {
+      const nome = el("input",{class:"ed nome-ed",value:j.nome,"aria-label":"Nome do jogador"});
+      nome.addEventListener("change",()=>{ const v=formatarNome(nome.value); if(!v){nome.value=j.nome;return;} j.nome=v; guardar(); render(); toast("Nome guardado"); });
+      cab.append(nome);
+      for(let k=0;k<10;k++){
+        const n=j.numeros[k], hit=numValido(n)&&R.contam.has(n);
+        const inp=el("input",{class:"ed"+(hit?" hit":""),inputmode:"numeric",value:numValido(n)?n:"","aria-label":"Número "+(k+1)+" de "+j.nome});
+        inp.addEventListener("change",()=>{
+          const raw=inp.value.trim();
+          if(raw===""){ j.numeros[k]=null; guardar(); render(); return; }
+          const v=Number(raw);
+          if(!numValido(v)){ inp.classList.add("erro"); toast("Use um número de 1 a 50"); return; }
+          if(j.numeros.some((x,idx)=>idx!==k && x===v)){ inp.classList.add("erro"); toast(j.nome+" já tem o "+v); return; }
+          j.numeros[k]=v; guardar(); render();
+        });
+        nums.append(inp);
+      }
+      const bp=el("button",{class:"pill "+(j.pago?"sim":"nao"),"aria-pressed":j.pago?"true":"false",title:"Tocar para alterar"}, j.pago?"Pago":"Falta pagar");
+      bp.addEventListener("click",()=>{ j.pago=!j.pago; guardar(); render(); toast(j.nome+": "+(j.pago?"pago":"falta pagar")); });
+      const del=el("button",{class:"del",title:"Remover "+j.nome,"aria-label":"Remover "+j.nome},"✕");
+      del.addEventListener("click",()=>{ if(confirm("Remover "+j.nome+" desta ronda?")){ S.jogadores.splice(i,1); guardar(); render(); }});
+      rod.append(bp, del);
+    }
+    cab.append(el("div",{class:"conta","aria-label":ac+" acertos"},ac));
+    card.append(cab, nums);
+    if(!jogadorCompleto(j)) card.append(el("div",{class:"aviso"},"Faltam números"));
+    card.append(rod);
+    g.append(card);
+  });
+
+  if(admin){
+    const novo=el("div",{class:"jog novo"});
+    const b=el("button",null,"+ Jogador");
+    b.addEventListener("click",()=>{ $("secJogador").scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(()=>$("jNome").focus(),350); });
+    novo.append(b); g.append(novo);
+  }
+}
+
+function renderSorteios(R){
+  const c=$("sorteios"); c.innerHTML="";
+  if(!R.ords.length){ c.append(el("div",{class:"vazio"},"Sem sorteios ainda. O próximo é verificado automaticamente.")); return; }
+  R.ords.forEach(s=>{
+    const col=el("div",{class:"sort"});
+    col.append(el("div",{class:"d"},dataCurta(s.data)));
+    const ol=el("ol"); s.numeros.forEach(n=>ol.append(el("li",null,n))); col.append(ol);
+    col.append(el("div",{class:"f"}, s.fonte==="auto"?"automático":"manual"));
+    if(admin){
+      const x=el("button",{class:"x","aria-label":"Apagar sorteio de "+dataLonga(s.data)},"Apagar");
+      x.addEventListener("click",()=>{ if(confirm("Apagar o sorteio de "+dataLonga(s.data)+"?")){ S.sorteios=S.sorteios.filter(o=>o!==s); guardar(); render(); }});
+      col.append(x);
+    }
+    c.append(col);
+  });
+}
+
+function renderPainel(){
+  const sel=$("eJogador"), atual=sel.value; sel.innerHTML="";
+  sel.append(el("option",{value:""},"Escolher jogador…"));
+  S.jogadores.slice().sort((a,b)=>a.nome.localeCompare(b.nome,"pt",{sensitivity:"base"}))
+    .forEach(j=>sel.append(el("option",{value:j.nome},j.nome)));
+  sel.value=S.jogadores.some(j=>j.nome===atual)?atual:"";
+  const h=$("historico"); h.innerHTML="";
+  (S.historico||[]).slice().reverse().forEach(r=>{
+    h.append(el("li",null, r.ronda+".ª ronda: "+(r.vencedores.length?r.vencedores.join(", "):"sem vencedor")+" ("+r.sorteios+" sorteios, fechada a "+dataLonga(r.fim)+")"));
+  });
+}
+
+/* ---------- Gestão ---------- */
+function abrirLogin(){ $("mErro").textContent=""; $("mPass").value=""; $("mLogin").classList.add("on"); setTimeout(()=>$("mPass").focus(),30); }
+function fecharLogin(){ $("mLogin").classList.remove("on"); }
+function ativarAdmin(){
+  admin=true; $("bVerificar").hidden=false;
+  $("painel").classList.add("on"); $("bGerir").textContent="Sair da gestão";
+  $("sData").value=hojeISO(); $("nInicio").value=hojeISO(); render();
+}
+async function entrar(){
+  const p=$("mPass").value, b=$("mEntrar");
+  b.disabled=true; $("mErro").textContent="A confirmar…";
+  const t = await decifrar(S.cofre, p);
+  b.disabled=false;
+  if(!t){ $("mErro").textContent="Palavra-passe errada."; $("mPass").select(); return; }
+  TOKEN=t; PASS=p; $("mErro").textContent=""; fecharLogin(); ativarAdmin(); toast("Modo de gestão ativo");
+}
+/* Configuração inicial */
+function abrirConfig(){
+  $("cRepo").value = (S.config && S.config.repo) || repoDetetado();
+  $("cRamo").value = (S.config && S.config.ramo) || "main";
+  ["cToken","cP1","cP2"].forEach(i=>$(i).value=""); $("cErro").textContent="";
+  $("mConfig").classList.add("on");
+}
+$("cCancelar").addEventListener("click",()=>$("mConfig").classList.remove("on"));
+$("cGuardar").addEventListener("click", async ()=>{
+  const repo=$("cRepo").value.trim().replace(/^https?:\/\/github\.com\//,"").replace(/\/$/,""), ramo=$("cRamo").value.trim()||"main";
+  const tok=$("cToken").value.trim(), p1=$("cP1").value, p2=$("cP2").value, err=$("cErro"), b=$("cGuardar");
+  if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){ err.textContent="Indique o repositório como utilizador/nome."; return; }
+  if(!tok){ err.textContent="Cole o token do GitHub."; return; }
+  if(p1.length<8){ err.textContent="Use uma palavra-passe com pelo menos 8 caracteres."; return; }
+  if(p1!==p2){ err.textContent="As palavras-passe não coincidem."; return; }
+  b.disabled=true; err.textContent="A testar a ligação ao GitHub…";
+  try{
+    TOKEN=tok;
+    const cfg={repo, ramo};
+    const {dados, sha} = await lerRepo(cfg);
+    dados.config = cfg;
+    dados.cofre = await cifrar(tok, p1);
+    dados.atualizado = Date.now();
+    await escreverRepo(dados, sha, "Configurar gestão", cfg);
+    PASS=p1; $("mConfig").classList.remove("on"); aplicar(dados); ativarAdmin();
+    toast("Configurado. A partir de agora basta a palavra-passe.");
+  }catch(e){
+    TOKEN="";
+    err.textContent = e.status===401 ? "Token inválido ou expirado." :
+      e.status===404 ? "Repositório não encontrado ou o token não tem acesso a ele." :
+      e.status===403 ? "O token não tem permissão de escrita em Contents." : "Não foi possível ligar ao GitHub.";
+  }
+  b.disabled=false;
+});
+$("bGerir").addEventListener("click",()=>{
+  if(admin){ if(pendentes && !confirm("Tem alterações por guardar. Sair mesmo assim?")) return; admin=false; PASS=""; TOKEN=""; $("bVerificar").hidden=true; if(pendentes){ pendentes=0; atualizarBarra(); carregar(); } $("painel").classList.remove("on"); $("bGerir").textContent="Gerir"; render(); toast("Saiu da gestão"); }
+  else if(!S || !S.cofre) abrirConfig();
+  else abrirLogin();
+});
+$("mEntrar").addEventListener("click",entrar);
+$("mCancelar").addEventListener("click",fecharLogin);
+$("mPass").addEventListener("keydown",e=>{ if(e.key==="Enter") entrar(); if(e.key==="Escape") fecharLogin(); });
+$("mLogin").addEventListener("click",e=>{ if(e.target.id==="mLogin") fecharLogin(); });
+
+$("bAddSorteio").addEventListener("click",()=>{
+  if(!admin) return;
+  const data=$("sData").value;
+  const ins=[...document.querySelectorAll("#fSorteio input.n")];
+  const nums=ins.filter(i=>!i.classList.contains("e")).map(i=>Number(i.value));
+  if(!data){ toast("Indique a data do sorteio"); return; }
+  if(!nums.every(numValido) || new Set(nums).size!==5){ toast("Indique 5 números diferentes, de 1 a 50"); return; }
+  if(S.sorteios.some(s=>s.data===data)){ toast("Já existe um sorteio nessa data"); return; }
+  S.sorteios.push({data,numeros:nums.sort((a,b)=>a-b),fonte:"manual"});
+  ins.forEach(i=>i.value=""); guardar(); render(); toast("Sorteio de "+dataCurta(data)+" adicionado");
+});
+
+$("bNovaRonda").addEventListener("click",()=>{
+  if(!admin) return;
+  const ini=$("nInicio").value; if(!ini){ toast("Indique a data de início"); return; }
+  const R=calcular();
+  if(!R.vencedores.length && !confirm("Esta ronda ainda não tem vencedor. Fechar mesmo assim?")) return;
+  if(!confirm("Começar a "+(S.ronda+1)+".ª ronda a "+dataLonga(ini)+"?")) return;
+  S.historico=S.historico||[];
+  S.historico.push({ronda:S.ronda,vencedores:R.vencedores.map(j=>j.nome),sorteios:R.ords.length,fim:hojeISO()});
+  S.ronda+=1; S.ano=Number(ini.slice(0,4)); S.inicio=ini; S.sorteios=[];
+  S.jogadores.forEach(j=>j.pago=false);
+  guardar(); render(); toast((S.ronda)+".ª ronda iniciada");
+});
+
+$("bPass").addEventListener("click",async ()=>{
+  const p=$("pNova").value; if(p.length<8){ toast("Use pelo menos 8 caracteres"); return; }
+  try{
+    const {dados, sha} = await lerRepo();
+    dados.cofre = await cifrar(TOKEN, p); dados.atualizado = Date.now();
+    await escreverRepo(dados, sha, "Alterar palavra-passe");
+    S.cofre = dados.cofre; base = dados.atualizado; PASS=p; $("pNova").value=""; toast("Palavra-passe alterada");
+  }catch(e){ toast("Não foi possível alterar: "+e.message); }
+});
+
+$("bAddJogador").addEventListener("click",()=>{
+  if(!admin) return;
+  const erro=$("jErro"); erro.textContent="";
+  const nome=formatarNome($("jNome").value);
+  if(!nome){ erro.textContent="Escreva o nome."; return; }
+  if(S.jogadores.some(j=>j.nome.localeCompare(nome,"pt",{sensitivity:"base"})===0)){ erro.textContent="Já existe um jogador com esse nome."; return; }
+  const ins=[...document.querySelectorAll("#secJogador input.jn")];
+  ins.forEach(i=>i.classList.remove("erro"));
+  const nums=[]; let mal=false;
+  ins.forEach(i=>{
+    const r=i.value.trim(); if(r===""){ nums.push(null); return; }
+    const v=Number(r);
+    if(!numValido(v) || nums.includes(v)){ i.classList.add("erro"); mal=true; nums.push(null); } else nums.push(v);
+  });
+  if(mal){ erro.textContent="Corrija os números assinalados (1 a 50, sem repetir)."; return; }
+  const ord=nums.filter(n=>n!=null).sort((a,b)=>a-b);
+  while(ord.length<10) ord.push(null);
+  S.jogadores.push({nome,numeros:ord,pago:$("jPago").checked});
+  $("jNome").value=""; $("jPago").checked=false; ins.forEach(i=>i.value="");
+  guardar(); render();
+  toast(nome+" acrescentado"+(ord.includes(null)?" (faltam números)":""));
+});
+$("bDelJogador").addEventListener("click",()=>{
+  if(!admin) return;
+  const nome=$("eJogador").value; if(!nome){ toast("Escolha um jogador"); return; }
+  if(!confirm("Eliminar "+nome+" desta ronda?")) return;
+  const i=S.jogadores.findIndex(j=>j.nome===nome); if(i<0) return;
+  S.jogadores.splice(i,1); guardar(); render(); toast(nome+" eliminado");
+});
+$("bImprimir").addEventListener("click",()=>{
+  const eraAdmin=admin;
+  if(eraAdmin){ admin=false; render(); }
+  const repor=()=>{ window.removeEventListener("afterprint",repor); if(eraAdmin){ admin=true; render(); } };
+  window.addEventListener("afterprint",repor);
+  setTimeout(()=>window.print(),50);
+});
+$("oOrig").addEventListener("click",()=>{ordem="orig";$("oOrig").setAttribute("aria-pressed","true");$("oAcertos").setAttribute("aria-pressed","false");render();});
+$("oAcertos").addEventListener("click",()=>{ordem="acertos";$("oAcertos").setAttribute("aria-pressed","true");$("oOrig").setAttribute("aria-pressed","false");render();});
+
+/* ---------- Dados ---------- */
+function aplicar(d){
+  d.jogadores.forEach(j=>j.nome=formatarNome(j.nome));
+  S=d; base=d.atualizado; render(); mostrarAtualizacao();
+}
+async function carregar(){
+  try{
+    if(TOKEN){ aplicar((await lerRepo()).dados); return; }
+    const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok) throw new Error("data.json "+r.status);
+    const d=await r.json();
+    if(!S || (d.atualizado||0) > (base||0)) aplicar(d);
+  }catch(e){ $("estado").textContent="Não foi possível carregar os dados. Abra a página pelo link do GitHub Pages."; }
+}
+async function guardarTodos(){
+  if(!pendentes || !TOKEN) return;
+  const b=$("bPublicar"); b.disabled=true; b.textContent="A guardar…";
+  let juntou=false;
+  for(let tentativa=0; tentativa<2; tentativa++){
+    try{
+      const {dados:atual, sha} = await lerRepo();
+      // não perder um sorteio que entrou automaticamente entretanto
+      if(atual.ronda===S.ronda) atual.sorteios.forEach(s=>{
+        if(s.fonte==="auto" && !S.sorteios.some(o=>o.data===s.data)){ S.sorteios.push(s); juntou=true; }
+      });
+      S.cofre = atual.cofre; S.config = atual.config;
+      S.atualizado = Date.now();
+      await escreverRepo(S, sha, "Atualização pelo dashboard");
+      pendentes=0; atualizarBarra(); aplicar(S);
+      toast(juntou ? "Guardado. Juntei também o sorteio que entrou entretanto." : "Guardado. Todos veem as alterações em cerca de 1 minuto.");
+      break;
+    }catch(e){
+      if((e.status===409||e.status===422) && tentativa===0) continue;   // alguém gravou ao mesmo tempo: tenta de novo
+      toast(e.status===401 ? "O token expirou. Volte a configurar a gestão." : "Não foi possível guardar. Tente de novo.");
+      break;
+    }
+  }
+  b.disabled=false; b.textContent="Guardar para todos";
+}
+$("bPublicar").addEventListener("click",guardarTodos);
+$("bDescartar").addEventListener("click",()=>{
+  if(!confirm("Descartar as alterações que ainda não guardou?")) return;
+  pendentes=0; atualizarBarra(); base=0; carregar(); toast("Alterações descartadas");
+});
+window.addEventListener("beforeunload",e=>{ if(pendentes){ e.preventDefault(); e.returnValue=""; } });
+
+function mostrarAtualizacao(){
+  const t = S && S.atualizado ? new Date(S.atualizado) : null;
+  $("estado").textContent = t ? "Atualizado a "+t.toLocaleDateString("pt-PT")+" às "+t.toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"})+"." : "";
+}
+
+// Verificar sorteio agora: pede ao GitHub para correr a verificação automática
+$("bVerificar").addEventListener("click",async ()=>{
+  const b=$("bVerificar"); b.disabled=true;
+  try{
+    await gh(`/repos/${S.config.repo}/actions/workflows/sorteio.yml/dispatches`,{method:"POST",body:JSON.stringify({ref:S.config.ramo})});
+    $("estado").textContent="Verificação pedida. Se houver sorteio novo, aparece dentro de 1 a 2 minutos.";
+    setTimeout(()=>{ base=0; carregar(); }, 75000);
+  }catch(e){ $("estado").textContent = e.status===403||e.status===404 ? "O token não tem permissão para Actions." : "Não foi possível pedir a verificação."; }
+  b.disabled=false;
+});
+
+// Mantém todos atualizados
+setInterval(()=>{ if(!pendentes && document.visibilityState==="visible") carregar(); }, 60000);
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && !pendentes) carregar(); });
+
+$("estado").textContent="A carregar…";
+carregar();
+carregar();
+})();
+</script>
+</body>
+</html>
