@@ -698,6 +698,17 @@
     48
    ],
    "fonte": "manual"
+  },
+  {
+   "data": "2026-10-30",
+   "numeros": [
+    3,
+    12,
+    14,
+    17,
+    37
+   ],
+   "fonte": "auto"
   }
  ],
  "historico": [
@@ -710,7 +721,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793377409123,
+ "atualizado": 1793394397984,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
