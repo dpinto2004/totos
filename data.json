@@ -17,7 +17,7 @@
     47,
     49
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Adolfo",
@@ -417,7 +417,7 @@
     43,
     50
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Madalena",
@@ -593,7 +593,7 @@
     25,
     27
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Sandra Barros",
@@ -721,7 +721,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793394397984,
+ "atualizado": 1793602739533,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
