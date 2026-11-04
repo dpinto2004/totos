@@ -177,7 +177,7 @@
     47,
     50
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Domingos",
@@ -369,7 +369,7 @@
     40,
     42
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "João",
@@ -732,7 +732,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793740514983,
+ "atualizado": 1793826140260,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
