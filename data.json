@@ -731,6 +731,17 @@
     49
    ],
    "fonte": "auto"
+  },
+  {
+   "data": "2026-11-10",
+   "numeros": [
+    15,
+    18,
+    31,
+    37,
+    41
+   ],
+   "fonte": "auto"
   }
  ],
  "historico": [
@@ -743,7 +754,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1793999503905,
+ "atualizado": 1794345265485,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
