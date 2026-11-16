@@ -33,7 +33,7 @@
     42,
     44
    ],
-   "pago": false
+   "pago": true
   },
   {
    "nome": "Amaro",
@@ -765,7 +765,7 @@
    "fim": "2026-10-21"
   }
  ],
- "atualizado": 1794815558227,
+ "atualizado": 1794829294803,
  "cofre": {
   "salt": "KZ5jqMjwEnJ6k9zz8rU7+w==",
   "iv": "sPLznsT2zbNq+TK+",
